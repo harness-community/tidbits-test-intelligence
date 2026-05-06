@@ -4,7 +4,6 @@ pipeline:
   projectIdentifier: w_inc
   orgIdentifier: default
   tags: {}
-
   stages:
     - stage:
         name: Build and Test
@@ -18,7 +17,6 @@ pipeline:
           runtime:
             type: Cloud
             spec: {}
-
           execution:
             steps:
               - step:
@@ -29,7 +27,6 @@ pipeline:
                     connectorRef: account.harnessImage
                     image: maven:3.9-eclipse-temurin-17
                     command: mvn compile -B
-
               - step:
                   type: RunTests
                   name: Run Tests with Test Intelligence
@@ -40,8 +37,6 @@ pipeline:
                     language: Java
                     buildTool: Maven
                     args: test
-                    # Test Intelligence automatically selects which tests to run
-                    # based on code changes — no extra config needed
                     runOnlySelectedTests: true
                     preCommand: |
                       echo "Running with Harness Test Intelligence"
@@ -51,7 +46,6 @@ pipeline:
                       spec:
                         paths:
                           - "**/**/surefire-reports/*.xml"
-
               - step:
                   type: Run
                   name: Package
@@ -60,13 +54,9 @@ pipeline:
                     connectorRef: account.harnessImage
                     image: maven:3.9-eclipse-temurin-17
                     command: mvn package -DskipTests -B
-
   properties:
     ci:
       codebase:
-        connectorRef: your_github_connector
         repoName: ecommerce-app
-        build:
-          type: branch
-          spec:
-            branch: <+input>
+        build: <+input>
+        sparseCheckout: []
