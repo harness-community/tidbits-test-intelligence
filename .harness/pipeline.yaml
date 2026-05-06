@@ -1,8 +1,8 @@
 pipeline:
   name: Ecommerce CI with Test Intelligence
   identifier: ecommerce_ci_test_intelligence
-  projectIdentifier: your_project
-  orgIdentifier: your_org
+  projectIdentifier: w_inc
+  orgIdentifier: default
   tags: {}
 
   stages:
