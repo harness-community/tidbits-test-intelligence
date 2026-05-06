@@ -1,0 +1,72 @@
+pipeline:
+  name: Ecommerce CI with Test Intelligence
+  identifier: ecommerce_ci_test_intelligence
+  projectIdentifier: your_project
+  orgIdentifier: your_org
+  tags: {}
+
+  stages:
+    - stage:
+        name: Build and Test
+        identifier: build_and_test
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Compile
+                  identifier: compile
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: maven:3.9-eclipse-temurin-17
+                    command: mvn compile -B
+
+              - step:
+                  type: RunTests
+                  name: Run Tests with Test Intelligence
+                  identifier: run_tests_ti
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: maven:3.9-eclipse-temurin-17
+                    language: Java
+                    buildTool: Maven
+                    args: test
+                    # Test Intelligence automatically selects which tests to run
+                    # based on code changes — no extra config needed
+                    runOnlySelectedTests: true
+                    preCommand: |
+                      echo "Running with Harness Test Intelligence"
+                      echo "Only changed-code-related tests will run"
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - "**/**/surefire-reports/*.xml"
+
+              - step:
+                  type: Run
+                  name: Package
+                  identifier: package
+                  spec:
+                    connectorRef: account.harnessImage
+                    image: maven:3.9-eclipse-temurin-17
+                    command: mvn package -DskipTests -B
+
+  properties:
+    ci:
+      codebase:
+        connectorRef: your_github_connector
+        repoName: ecommerce-app
+        build:
+          type: branch
+          spec:
+            branch: <+input>
