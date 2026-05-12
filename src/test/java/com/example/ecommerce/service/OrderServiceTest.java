@@ -57,7 +57,7 @@ class OrderServiceTest {
 
         address = new Address("1 Main St", "Austin", "TX", "78701", "US");
 
-        when(orderNumberGenerator.generate()).thenReturn("ORD-20240101-001001");
+        lenient().when(orderNumberGenerator.generate()).thenReturn("ORD-20240101-001001");
     }
 
     private void stubPricing() {
